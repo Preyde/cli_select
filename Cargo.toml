@@ -3,7 +3,7 @@ name = "cli_select"
 version = "0.1.1"
 edition = "2018"
 authors = ["Pascal Frank"]
-description = "A crate to create and customize a select dialog for command line"
+description = "A crate build on top of crossterm to provide a simple customizable select dialog for the command line."
 license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

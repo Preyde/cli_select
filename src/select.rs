@@ -53,6 +53,8 @@ where
     pub selection_changed: Option<Box<dyn Fn(SelectDialogKey, &I)>>,
     move_selected_item_forward: bool,
     underline_selected_item: bool,
+    longest_item_len: usize,
+    item_count: usize,
 }
 
 impl<'a, I> Select<'a, I>
@@ -74,14 +76,36 @@ where
             up_keys: vec![],
             down_keys: vec![],
             lines: vec![],
+            longest_item_len: 0,
+            item_count: 0,
         }
     }
     fn build_lines(&mut self) {
-        self.lines = self
-            .items
-            .iter()
-            .map(|item| Line::new(item.to_string(), self.pointer))
-            .collect();
+        let mut lines: Vec<Line> = vec![];
+        let mut item_count: usize = 0;
+        for item in self.items {
+            let line = Line::new(item.to_string(), self.pointer);
+
+            if line.len() > self.longest_item_len {
+                self.longest_item_len = line.len()
+            }
+            lines.push(line);
+            item_count += 1;
+        }
+        self.lines = lines;
+        self.item_count = item_count;
+        // self.lines = self
+        //     .items
+        //     .iter()
+        //     .map(|item| {
+        //         let line = Line::new(item.to_string(), self.pointer);
+
+        //         if line.len() > self.longest_item_len {
+        //             self.longest_item_len = line.len()
+        //         }
+        //         line
+        //     })
+        //     .collect();
     }
     fn print_lines(&mut self) {
         self.lines.iter_mut().for_each(|line| line.default());
@@ -97,16 +121,16 @@ where
 
         self.lines.iter().for_each(|line| println!("{}", line))
     }
+
     fn erase_printed_items(&self) {
-        self.move_n_lines_up(4);
+        self.move_n_lines_up(self.item_count + 1);
 
-        self.items
-            .into_iter()
-            .for_each(|item| println!("{}", " ".repeat(item.to_string().chars().count() + 3)));
-
-        self.move_n_lines_up(4);
+        for line in &self.lines {
+            println!("{}", " ".repeat(line.len()));
+        }
+        self.move_n_lines_up(self.item_count + 1);
     }
-    fn move_n_lines_up(&self, n: u32) {
+    fn move_n_lines_up(&self, n: usize) {
         println!("[33[{}A", n);
     }
 
@@ -114,12 +138,6 @@ where
         if self.selected_item == 0 {
             return;
         };
-        // let selected_item = Select::new(&vec!["item1", "item2", "item3"])
-        //     .add_up_key(KeyCode::Char('j'))
-        //     .pointer('◉')
-        //     .not_selected_pointer('○')
-        //     .underline_selected_item()
-        //     .start();
         self.selected_item -= 1;
         self.erase_printed_items();
         self.print_lines();

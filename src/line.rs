@@ -1,4 +1,21 @@
+use core::fmt;
 use std::fmt::{Display, Formatter};
+
+#[cfg(test)]
+mod tests {
+    use std::fmt::{Display, Formatter};
+
+    use super::Line;
+
+    #[test]
+    fn default_line_is_printed_correctly() {
+        let output = String::new();
+
+        let line = Line::new(String::from("test"), '>');
+
+        // line.fmt(&mut output.fmt(f));
+    }
+}
 
 pub struct Line {
     text: String,
@@ -39,22 +56,26 @@ impl Line {
     fn underline_text(&self, text: &str) -> String {
         format!("[4m{}[0m", text)
     }
+    pub fn len(&self) -> usize {
+        self.text.chars().count() + 2
+    }
 }
 
 impl Display for Line {
-    fn fmt(&self, _f: &mut Formatter) -> Result<(), std::fmt::Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         let text = if self.underline {
             Some(self.underline_text(&self.text))
         } else {
             None
         };
+        let pointer = if self.is_selected { self.pointer } else { ' ' };
 
-        println!(
+        f.write_str(&format!(
             "{}{}{}",
-            self.pointer,
+            pointer,
             " ".repeat(self.space),
-            text.as_ref().unwrap_or(&self.text)
-        );
+            text.as_ref().unwrap_or(&self.text),
+        ))?;
         Ok(())
     }
 }
