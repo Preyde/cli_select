@@ -36,7 +36,7 @@ mod tests {
 ///     .underline_selected_item()
 ///     .start();
 /// ```
-struct Select<'a, I>
+pub struct Select<'a, I>
 where
     I: ToString + Display,
     // F: Fn(SelectDialogKey, &I),

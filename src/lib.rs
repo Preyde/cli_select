@@ -12,6 +12,8 @@ use crossterm::{
 };
 use line::Line;
 
+pub use select::Select;
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -19,9 +21,9 @@ mod tests {
 }
 
 #[derive(Debug, Eq, PartialEq)]
-enum SelectDialogKey {
+pub enum SelectDialogKey {
     UpKey,
     DownKey,
 }
 
-type SelectionChange<T> = Box<dyn Fn(SelectDialogKey, &T)>;
+pub type SelectionChange<T> = Box<dyn Fn(SelectDialogKey, &T)>;
