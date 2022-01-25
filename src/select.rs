@@ -21,7 +21,7 @@ mod tests {
 /// # Example
 ///
 /// Create the dialog with default settings
-///   
+///
 /// ```
 /// let selected_item = Select::new(vec!["item1", "item2", "item3"]).start()
 /// ```
