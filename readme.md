@@ -1,3 +1,3 @@
-#cli_select
+# cli_select
 
-Provides easy way to show a select dialog on command line
+A crate build on top of crossterm to provide a simple customizable select dialog for the command line.
