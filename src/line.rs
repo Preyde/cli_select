@@ -6,8 +6,6 @@ use std::{
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::{Display, Formatter};
-
     use super::Line;
 
     #[test]
@@ -18,7 +16,7 @@ mod tests {
     }
     #[test]
     fn unselected_line_printed_without_pointer() {
-        let mut line = Line::new(String::from("test"), '>');
+        let line = Line::new(String::from("test"), '>');
         assert_eq!(line.draw(), "  test")
     }
 }
@@ -89,8 +87,7 @@ impl Line {
 
 impl Display for Line {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        print!("{}", self.draw());
-        std::io::stdout().flush();
+        write!(f, "{}", self.draw())?;
         Ok(())
     }
 }
