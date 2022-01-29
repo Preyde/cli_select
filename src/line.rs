@@ -1,8 +1,5 @@
 use core::fmt;
-use std::{
-    fmt::{Display, Formatter},
-    io::Write,
-};
+use std::fmt::{Display, Formatter};
 
 #[cfg(test)]
 mod tests {
@@ -59,11 +56,6 @@ impl Line {
     /// ascii code to underline
     fn underline_text(&self, text: &str) -> String {
         format!("[4m{}[0m", text)
-    }
-    fn underline_if_required(&mut self, text: &str) {
-        if self.underline {
-            self.text = format!("[4m{}[0m", text);
-        }
     }
     pub fn len(&self) -> usize {
         self.text.chars().count() + self.space + 1

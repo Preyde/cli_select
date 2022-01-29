@@ -1,18 +1,7 @@
 mod line;
 mod select;
 
-use core::fmt::Display;
 pub use crossterm::event::KeyCode;
-use crossterm::{
-    self,
-    event::{
-        read, Event,
-        KeyCode::{Down, Up},
-        KeyEvent, KeyModifiers,
-    },
-};
-use line::Line;
-
 pub use select::Select;
 
 #[cfg(test)]

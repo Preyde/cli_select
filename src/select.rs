@@ -6,7 +6,7 @@ use crossterm::event::{
     KeyCode::{Down, Up},
     KeyEvent, KeyModifiers,
 };
-use std::{borrow::BorrowMut, fmt::Display, io::Write};
+use std::{fmt::Display, io::Write};
 
 use crate::{line::Line, SelectDialogKey};
 
@@ -67,9 +67,10 @@ where
     item_count: usize,
     // logger: Logger<W>,
 }
-
+///Logger Struct for Testing. Not used yet.
+#[allow(dead_code)]
 struct Logger<W: Write>(W);
-
+#[allow(dead_code)]
 impl<W> Logger<W>
 where
     W: Write,
