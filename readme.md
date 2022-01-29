@@ -4,7 +4,7 @@ A crate build on top of crossterm to provide a simple customizable select dialog
 
 <br>
 
-# Usage
+# Example
 
 Cargo.toml
 
