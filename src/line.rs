@@ -49,6 +49,7 @@ impl Line {
     pub fn underline(&mut self) {
         self.underline = true;
     }
+    /// Define the space between pointer and item. Default is 1.
     pub fn space_from_pointer(&mut self, space: usize) {
         self.space = space;
     }

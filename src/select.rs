@@ -42,7 +42,7 @@ pub mod junk {}
 /// let selected_item = Select::new(&items)
 ///     .add_up_key(KeyCode::Char('j'))
 ///     .pointer('◉')
-///     .not_selected_pointer('○')
+///     .not_selected_pointer('𐩒')
 ///     .underline_selected_item()
 ///     .start();
 /// ```
@@ -134,7 +134,7 @@ where
             self.lines[self.selected_item].underline();
         }
         if self.move_selected_item_forward {
-            self.lines[self.selected_item].space_from_pointer(1);
+            self.lines[self.selected_item].space_from_pointer(2);
         }
 
         self.lines.iter().for_each(|line| println!("{}", line))

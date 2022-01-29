@@ -60,8 +60,8 @@ fn main() {
 
     let selected_item = select        
         .pointer('◉')
-        .not_selected_pointer('○')
-        .underline_selected_item()
+        .not_selected_pointer('🞅')
+        .move_selected_item_forward()
         .start();
 
     println!("You selected: {}", selected_item);
@@ -71,8 +71,8 @@ fn main() {
 ### Output
 
 ```
-◉ test1
-  test2
-  test3
-You selected: test1
+◉  item1
+🞅 item2
+🞅 item3
+You selected: item1
 ```
