@@ -7,7 +7,7 @@ repository = "https://github.com/Preyde/cli_select/"
 authors = ["Pascal Frank"]
 description = "A crate build on top of crossterm to provide a simple customizable select dialog for the command line."
 license = "MIT"
-keywords = ["cli", "select", "box", "select-box", "dialog", "select-dialog", "cli-select", "cli_select", "radiobutton"]
+keywords = ["cli", "select", "cli_select", "select-box", "radiobutton"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
