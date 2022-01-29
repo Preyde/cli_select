@@ -22,6 +22,7 @@ pub struct Line {
     text: String,
     is_selected: bool,
     pointer: char,
+    not_selected_pointer: char,
     space: usize,
     underline: bool,
 }
@@ -35,11 +36,15 @@ impl Line {
             pointer,
             space: 1,
             underline: false,
+            not_selected_pointer: ' ',
         }
     }
     /// Show the pointer for this line
     pub fn select(&mut self) {
         self.is_selected = true;
+    }
+    pub fn not_selected_pointer(&mut self, pointer: char) {
+        self.not_selected_pointer = pointer;
     }
     pub fn underline(&mut self) {
         self.underline = true;
@@ -66,7 +71,11 @@ impl Line {
         } else {
             None
         };
-        let pointer = if self.is_selected { self.pointer } else { ' ' };
+        let pointer = if self.is_selected {
+            self.pointer
+        } else {
+            self.not_selected_pointer
+        };
 
         format!(
             "{}{}{}",

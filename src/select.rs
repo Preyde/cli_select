@@ -110,7 +110,11 @@ where
         let mut lines: Vec<Line> = vec![];
         let mut item_count: usize = 0;
         for item in self.items {
-            let line = Line::new(item.to_string(), self.pointer);
+            let mut line = Line::new(item.to_string(), self.pointer);
+
+            if let Some(pointer) = self.not_selected_pointer {
+                line.not_selected_pointer(pointer);
+            }
 
             if line.len() > self.longest_item_len {
                 self.longest_item_len = line.len()
