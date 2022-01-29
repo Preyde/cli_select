@@ -12,11 +12,57 @@ use crate::{line::Line, SelectDialogKey};
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {}
+    fn initial_print_works() {
+        let items = vec!["item1", "item2", "item3"];
+        let buffer: Vec<u8> = vec![];
+
+        let mut select = Select::new(&items, buffer);
+
+        Select::build_lines(&mut select);
+        Select::print_lines(&mut select);
+
+        assert_eq!(
+            "> item1\n  item2\n  item3\n",
+            String::from_utf8(select.out).unwrap()
+        )
+    }
+    #[test]
+    fn move_down_works() {
+        let items = vec!["item1", "item2", "item3"];
+        let buffer: Vec<u8> = vec![];
+
+        let mut select = Select::new(&items, buffer);
+
+        Select::build_lines(&mut select);
+        Select::move_down(&mut select);
+
+        assert_eq!(
+            "  item1\n> item2\n  item3\n",
+            String::from_utf8(select.out).unwrap()
+        );
+        assert_eq!(select.selected_item, 1);
+    }
+
+    fn print_on_move_up_is_same() {
+        let items = vec!["item1", "item2", "item3"];
+        let buffer: Vec<u8> = vec![];
+
+        let mut select = Select::new(&items, buffer);
+
+        Select::build_lines(&mut select);
+        Select::move_up(&mut select);
+
+        assert_eq!(
+            "> item1\n  item2\n  item3\n",
+            String::from_utf8(select.out).unwrap()
+        );
+        assert_eq!(select.selected_item, 0);
+    }
 }
 
-pub mod junk {}
 /// Struct to create a select dialog and get the users chosen item
 ///
 /// The input is retrieved over an endless loop. When the user presses enter,
@@ -28,28 +74,30 @@ pub mod junk {}
 ///
 /// ```
 /// use cli_select::Select;
+/// use std::io::stdout;
 ///
 /// let items = vec!["item1", "item2", "item3"];
-/// let selected_item = Select::new(&items).start();
+/// let selected_item = Select::new(&items, stdout()).start();
 /// ```
 ///
 /// Customize dialog before starting
 ///
 /// ```
 /// use cli_select::{Select, KeyCode};
+/// use std::io::stdout;
 ///
 /// let items = vec!["item1", "item2", "item3"];
-/// let selected_item = Select::new(&items)
+/// let selected_item = Select::new(&items, stdout())
 ///     .add_up_key(KeyCode::Char('j'))
 ///     .pointer('◉')
 ///     .not_selected_pointer('𐩒')
 ///     .underline_selected_item()
 ///     .start();
 /// ```
-pub struct Select<'a, I>
+pub struct Select<'a, I, W>
 where
     I: ToString + Display,
-    // W: std::io::Write, // F: Fn(SelectDialogKey, &I),
+    W: Write, // W: std::io::Write, // F: Fn(SelectDialogKey, &I),
 {
     items: &'a Vec<I>,
     lines: Vec<Line>,
@@ -65,28 +113,19 @@ where
     underline_selected_item: bool,
     longest_item_len: usize,
     item_count: usize,
-    // logger: Logger<W>,
-}
-///Logger Struct for Testing. Not used yet.
-#[allow(dead_code)]
-struct Logger<W: Write>(W);
-#[allow(dead_code)]
-impl<W> Logger<W>
-where
-    W: Write,
-{
-    pub fn log(&mut self, msg: &str) -> Result<usize, std::io::Error> {
-        Ok(self.0.write(msg.as_bytes())?)
-    }
+    out: W,
+    // out: Option<W>, // logger: Logger<W>,
 }
 
-impl<'a, I> Select<'a, I>
+impl<'a, I, W> Select<'a, I, W>
 where
     I: ToString + Display + core::fmt::Debug,
-    // W: std::io::Write,
-    // F: Fn(SelectDialogKey, &I),
+    W: std::io::Write,
 {
-    pub fn new(items: &'a Vec<I>) -> Select<'a, I> {
+    /// Create a new Select Dialog with lines defined in the items parameter.
+    ///
+    /// Any Struct that implements std::io::write can be used as output. Use std::io::stdout() as second parameter to print to console
+    pub fn new(items: &'a Vec<I>, out: W) -> Select<'a, I, W> {
         Select {
             items,
             pointer: '>',
@@ -102,7 +141,7 @@ where
             lines: vec![],
             longest_item_len: 0,
             item_count: 0,
-            // writer: std::io::stdout() as W,
+            out,
         }
     }
     /// Builds the lines and store them for later usage. item_count and longest_item_len is initialized.
@@ -137,7 +176,9 @@ where
             self.lines[self.selected_item].space_from_pointer(2);
         }
 
-        self.lines.iter().for_each(|line| println!("{}", line))
+        for line in self.lines.iter() {
+            writeln!(&mut self.out, "{}", line).unwrap()
+        }
     }
 
     fn erase_printed_items(&self) {
@@ -175,6 +216,7 @@ where
             event_handler(key, current_item);
         }
     }
+    /// Starts the Select Dialog and waits for the users input. The return is a reference to the chosen item
     pub fn start(&mut self) -> &I {
         self.build_lines();
         self.print_lines();
