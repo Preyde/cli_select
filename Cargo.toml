@@ -2,7 +2,7 @@
 name = "cli_select"
 version = "0.1.4"
 edition = "2018"
-readme = "https://github.com/Preyde/cli_select/blob/main/readme.md"
+readme = "README.md"
 repository = "https://github.com/Preyde/cli_select/"
 authors = ["Pascal Frank"]
 description = "A crate build on top of crossterm to provide a simple customizable select dialog for the command line."
