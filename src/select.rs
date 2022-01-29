@@ -1,10 +1,12 @@
-use std::fmt::Display;
+// pub extern crate crossterm;
+// use crossterm::event::KeyCode::{self, Down, Up};
 
 use crossterm::event::{
     read, Event, KeyCode,
     KeyCode::{Down, Up},
     KeyEvent, KeyModifiers,
 };
+use std::{borrow::BorrowMut, fmt::Display, io::Write};
 
 use crate::{line::Line, SelectDialogKey};
 
@@ -13,6 +15,8 @@ mod tests {
     #[test]
     fn it_works() {}
 }
+
+pub mod junk {}
 /// Struct to create a select dialog and get the users chosen item
 ///
 /// The input is retrieved over an endless loop. When the user presses enter,
@@ -23,13 +27,19 @@ mod tests {
 /// Create the dialog with default settings
 ///
 /// ```
-/// let selected_item = Select::new(vec!["item1", "item2", "item3"]).start()
+/// use cli_select::{Select, KeyCode};
+///
+/// let items = vec!["item1", "item2", "item3"];
+/// let selected_item = Select::new(&items).start();
 /// ```
 ///
 /// Customize dialog before starting
 ///
 /// ```
-/// let selected_item = Select::new(&vec!["item1", "item2", "item3"])
+/// use cli_select::{Select, KeyCode};
+///
+/// let items = vec!["item1", "item2", "item3"];
+/// let selected_item = Select::new(&items)
 ///     .add_up_key(KeyCode::Char('j'))
 ///     .pointer('◉')
 ///     .not_selected_pointer('○')
@@ -39,7 +49,7 @@ mod tests {
 pub struct Select<'a, I>
 where
     I: ToString + Display,
-    // F: Fn(SelectDialogKey, &I),
+    // W: std::io::Write, // F: Fn(SelectDialogKey, &I),
 {
     items: &'a Vec<I>,
     lines: Vec<Line>,
@@ -55,14 +65,27 @@ where
     underline_selected_item: bool,
     longest_item_len: usize,
     item_count: usize,
+    // logger: Logger<W>,
+}
+
+struct Logger<W: Write>(W);
+
+impl<W> Logger<W>
+where
+    W: Write,
+{
+    pub fn log(&mut self, msg: &str) -> Result<usize, std::io::Error> {
+        Ok(self.0.write(msg.as_bytes())?)
+    }
 }
 
 impl<'a, I> Select<'a, I>
 where
     I: ToString + Display + core::fmt::Debug,
+    // W: std::io::Write,
     // F: Fn(SelectDialogKey, &I),
 {
-    pub fn new(items: &'a Vec<I>) -> Self {
+    pub fn new(items: &'a Vec<I>) -> Select<'a, I> {
         Select {
             items,
             pointer: '>',
@@ -78,8 +101,10 @@ where
             lines: vec![],
             longest_item_len: 0,
             item_count: 0,
+            // writer: std::io::stdout() as W,
         }
     }
+    /// Builds the lines and store them for later usage. item_count and longest_item_len is initialized.
     fn build_lines(&mut self) {
         let mut lines: Vec<Line> = vec![];
         let mut item_count: usize = 0;
@@ -94,18 +119,6 @@ where
         }
         self.lines = lines;
         self.item_count = item_count;
-        // self.lines = self
-        //     .items
-        //     .iter()
-        //     .map(|item| {
-        //         let line = Line::new(item.to_string(), self.pointer);
-
-        //         if line.len() > self.longest_item_len {
-        //             self.longest_item_len = line.len()
-        //         }
-        //         line
-        //     })
-        //     .collect();
     }
     fn print_lines(&mut self) {
         self.lines.iter_mut().for_each(|line| line.default());

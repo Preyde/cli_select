@@ -2,11 +2,12 @@ mod line;
 mod select;
 
 use core::fmt::Display;
+pub use crossterm::event::KeyCode;
 use crossterm::{
     self,
     event::{
         read, Event,
-        KeyCode::{self, Down, Up},
+        KeyCode::{Down, Up},
         KeyEvent, KeyModifiers,
     },
 };
