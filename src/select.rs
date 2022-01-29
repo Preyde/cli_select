@@ -27,7 +27,7 @@ pub mod junk {}
 /// Create the dialog with default settings
 ///
 /// ```
-/// use cli_select::{Select, KeyCode};
+/// use cli_select::Select;
 ///
 /// let items = vec!["item1", "item2", "item3"];
 /// let selected_item = Select::new(&items).start();
