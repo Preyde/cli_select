@@ -9,12 +9,12 @@ mod tests {
     fn selected_line_printed_with_pointer() {
         let mut line = Line::new(String::from("test"), '>');
         line.select();
-        assert_eq!(line.draw(), "> test")
+        assert_eq!(line.to_string(), "> test")
     }
     #[test]
     fn unselected_line_printed_without_pointer() {
         let line = Line::new(String::from("test"), '>');
-        assert_eq!(line.draw(), "  test")
+        assert_eq!(line.to_string(), "  test")
     }
 }
 #[derive(Debug)]
@@ -66,7 +66,10 @@ impl Line {
     pub fn len(&self) -> usize {
         self.text.chars().count() + self.space + 1
     }
-    fn draw(&self) -> String {
+}
+
+impl Display for Line {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         let text = if self.underline {
             Some(self.underline_text(&self.text))
         } else {
@@ -78,18 +81,14 @@ impl Line {
             self.not_selected_pointer
         };
 
-        format!(
+        let result = format!(
             "{}{}{}",
             pointer,
             " ".repeat(self.space),
             text.as_ref().unwrap_or(&self.text),
-        )
-    }
-}
+        );
 
-impl Display for Line {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.draw())?;
+        write!(f, "{}", result)?;
         Ok(())
     }
 }

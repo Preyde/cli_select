@@ -1,5 +1,4 @@
-// pub extern crate crossterm;
-// use crossterm::event::KeyCode::{self, Down, Up};
+use crate::{line::Line, SelectDialogKey};
 
 use crossterm::event::{
     read, Event, KeyCode,
@@ -7,8 +6,6 @@ use crossterm::event::{
     KeyEvent, KeyModifiers,
 };
 use std::{fmt::Display, io::Write};
-
-use crate::{line::Line, SelectDialogKey};
 
 #[cfg(test)]
 mod tests {
@@ -29,6 +26,7 @@ mod tests {
             String::from_utf8(select.out).unwrap()
         )
     }
+    /// test that moving down works when index is less than last item
     #[test]
     fn move_down_works() {
         let items = vec!["item1", "item2", "item3"];
@@ -45,8 +43,9 @@ mod tests {
         );
         assert_eq!(select.selected_item, 1);
     }
-
-    fn print_on_move_up_is_same() {
+    /// test that moving up is not possible when selected item is 0
+    #[test]
+    fn no_output_when_moving_up_not_possible() {
         let items = vec!["item1", "item2", "item3"];
         let buffer: Vec<u8> = vec![];
 
@@ -55,11 +54,25 @@ mod tests {
         Select::build_lines(&mut select);
         Select::move_up(&mut select);
 
-        assert_eq!(
-            "> item1\n  item2\n  item3\n",
-            String::from_utf8(select.out).unwrap()
-        );
+        assert_eq!("", String::from_utf8(select.out).unwrap());
         assert_eq!(select.selected_item, 0);
+    }
+
+    #[test]
+    fn no_output_when_moving_down_not_possible() {
+        let items = vec!["item1", "item2", "item3"];
+        let buffer: Vec<u8> = vec![];
+
+        let mut select = Select::new(&items, buffer);
+
+        Select::build_lines(&mut select);
+
+        select.selected_item = 2; // selected item is now item3
+        Select::move_down(&mut select);
+
+        assert_eq!("", String::from_utf8(select.out).unwrap());
+
+        assert_eq!(select.selected_item, 2);
     }
 }
 
@@ -280,6 +293,12 @@ where
     pub fn move_selected_item_forward(&mut self) -> &mut Self {
         self.move_selected_item_forward = true;
         self
+    }
+    #[cfg(feature = "color")]
+    pub fn color_selected_item(&mut self) -> &mut Self {
+        use crossterm::style::Color;
+
+        Color
     }
     pub fn underline_selected_item(&mut self) -> &mut Self {
         self.underline_selected_item = true;

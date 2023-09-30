@@ -6,17 +6,17 @@ A crate build on top of crossterm to provide a simple customizable select dialog
 
 # Example
 
-Cargo.toml
+`Cargo.toml`
 
 ```toml
 [dependencies]
-cli_select = "0.1.3"
+cli_select = "0.1.4"
 ```
 <br>
 
 ## Basic
 
-main.rs
+`main.rs`
 
 ```rust
 use cli_select::Select;
