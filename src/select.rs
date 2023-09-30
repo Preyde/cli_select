@@ -5,6 +5,7 @@ use crossterm::event::{
     KeyCode::{Down, Up},
     KeyEvent, KeyModifiers,
 };
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use std::{fmt::Display, io::Write};
 
 #[cfg(test)]
@@ -238,17 +239,13 @@ where
         self.down_keys.push(self.default_down);
 
         loop {
+            let _ = enable_raw_mode();
             let event = read().unwrap();
-
-            if event
-                == Event::Key(KeyEvent {
-                    code: KeyCode::Enter,
-                    modifiers: KeyModifiers::NONE,
-                })
-            {
+            let _ = disable_raw_mode();
+            if event == Event::Key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE)) {
                 break;
             }
-            if self.event_contains_key(event, &self.up_keys) {
+            if self.event_contains_key(event.clone(), &self.up_keys) {
                 self.move_up();
                 self.call_event_handler_if_supplied(SelectDialogKey::UpKey);
                 continue;
@@ -258,16 +255,12 @@ where
                 continue;
             }
         }
+
         &self.items.to_owned()[self.selected_item]
     }
     fn event_contains_key(&self, event: Event, keys: &Vec<KeyCode>) -> bool {
         for key in keys.iter() {
-            if event
-                == Event::Key(KeyEvent {
-                    code: key.clone(),
-                    modifiers: KeyModifiers::NONE,
-                })
-            {
+            if event == Event::Key(KeyEvent::new(key.clone(), KeyModifiers::NONE)) {
                 return true;
             }
         }

@@ -1,10 +1,10 @@
 [package]
 name = "cli_select"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/Preyde/cli_select/"
-authors = ["Pascal Frank"]
+authors = ["Preyde"]
 description = "A crate build on top of crossterm to provide a simple customizable select dialog for the command line."
 license = "MIT"
 keywords = ["cli", "select", "cli_select", "select-box", "radiobutton"]
@@ -12,7 +12,7 @@ keywords = ["cli", "select", "cli_select", "select-box", "radiobutton"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-crossterm = "0.22.1"
+crossterm = "0.27.0"
 colored = {version = "2.0.0", optional = true}
 
 [features]
