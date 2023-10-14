@@ -113,7 +113,7 @@ where
     I: ToString + Display,
     W: Write, // W: std::io::Write, // F: Fn(SelectDialogKey, &I),
 {
-    items: &'a Vec<I>,
+    items: &'a [I],
     lines: Vec<Line>,
     selected_item: usize,
     pointer: char,
@@ -139,7 +139,7 @@ where
     /// Create a new Select Dialog with lines defined in the items parameter.
     ///
     /// Any Struct that implements std::io::write can be used as output. Use std::io::stdout() as second parameter to print to console
-    pub fn new(items: &'a Vec<I>, out: W) -> Select<'a, I, W> {
+    pub fn new(items: &'a [I], out: W) -> Select<'a, I, W> {
         Select {
             items,
             pointer: '>',
@@ -255,8 +255,6 @@ where
                 continue;
             }
         }
-
-        dbg!(self.items.as_ptr() as usize);
 
         &self.items[self.selected_item]
     }
