@@ -226,7 +226,7 @@ where
     }
     fn call_event_handler_if_supplied(&self, key: SelectDialogKey) {
         if let Some(event_handler) = self.selection_changed.as_ref() {
-            let current_item = &self.items.to_owned()[self.selected_item];
+            let current_item = &self.items[self.selected_item];
             event_handler(key, current_item);
         }
     }
@@ -255,6 +255,8 @@ where
                 continue;
             }
         }
+
+        dbg!(self.items.as_ptr() as usize);
 
         &self.items[self.selected_item]
     }
