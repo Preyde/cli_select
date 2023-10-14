@@ -256,9 +256,9 @@ where
             }
         }
 
-        &self.items.to_owned()[self.selected_item]
+        &self.items[self.selected_item]
     }
-    fn event_contains_key(&self, event: Event, keys: &Vec<KeyCode>) -> bool {
+    fn event_contains_key(&self, event: Event, keys: &[KeyCode]) -> bool {
         for key in keys.iter() {
             if event == Event::Key(KeyEvent::new(key.clone(), KeyModifiers::NONE)) {
                 return true;
