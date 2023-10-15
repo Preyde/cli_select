@@ -113,7 +113,7 @@ where
     I: ToString + Display,
     W: Write, // W: std::io::Write, // F: Fn(SelectDialogKey, &I),
 {
-    items: &'a Vec<I>,
+    items: &'a [I],
     lines: Vec<Line>,
     selected_item: usize,
     pointer: char,
@@ -139,7 +139,7 @@ where
     /// Create a new Select Dialog with lines defined in the items parameter.
     ///
     /// Any Struct that implements std::io::write can be used as output. Use std::io::stdout() as second parameter to print to console
-    pub fn new(items: &'a Vec<I>, out: W) -> Select<'a, I, W> {
+    pub fn new(items: &'a [I], out: W) -> Select<'a, I, W> {
         Select {
             items,
             pointer: '>',
@@ -226,7 +226,7 @@ where
     }
     fn call_event_handler_if_supplied(&self, key: SelectDialogKey) {
         if let Some(event_handler) = self.selection_changed.as_ref() {
-            let current_item = &self.items.to_owned()[self.selected_item];
+            let current_item = &self.items[self.selected_item];
             event_handler(key, current_item);
         }
     }
@@ -256,9 +256,9 @@ where
             }
         }
 
-        &self.items.to_owned()[self.selected_item]
+        &self.items[self.selected_item]
     }
-    fn event_contains_key(&self, event: Event, keys: &Vec<KeyCode>) -> bool {
+    fn event_contains_key(&self, event: Event, keys: &[KeyCode]) -> bool {
         for key in keys.iter() {
             if event == Event::Key(KeyEvent::new(key.clone(), KeyModifiers::NONE)) {
                 return true;
